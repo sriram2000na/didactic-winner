@@ -64,6 +64,7 @@ function compile()
 end
 
 function compileRun()
+  vim.cmd('w')
   base(true, 'compr')
 end
 

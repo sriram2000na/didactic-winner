@@ -70,11 +70,12 @@ return packer.startup(function(use)
   use "hrsh7th/cmp-buffer" -- buffer completions
   use "hrsh7th/cmp-path" -- path completions
   use "hrsh7th/cmp-cmdline" -- cmdline completions
-  use "saadparwaiz1/cmp_luasnip" -- snippet completions
+  -- use "saadparwaiz1/cmp_luasnip" -- snippet completions
   use "hrsh7th/cmp-nvim-lsp"
+  use 'hrsh7th/vim-vsnip'
 
   -- snippets
-  use "L3MON4D3/LuaSnip" --snippet engine
+  -- use "L3MON4D3/LuaSnip" --snippet engine
   -- use "rafamadriz/friendly-snippets" -- a bunch of snippets to use
 
   -- LSP
@@ -96,8 +97,6 @@ return packer.startup(function(use)
   -- Git
   use "lewis6991/gitsigns.nvim"
 
-  -- NeoFormat
-  use "sbdchd/neoformat"
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

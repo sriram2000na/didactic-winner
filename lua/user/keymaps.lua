@@ -73,3 +73,5 @@ keymap("i", "<C-_>", "<cmd>lua require('Comment.api').toggle_current_linewise()<
 -- Ctrl + s to save
 keymap("i","<C-s>","<cmd>w<CR>",opts)
 keymap("n","<C-s>",":w<CR>",opts)
+-- CP compileRun()
+keymap("n","<leader>r",":lua compileRun()<CR>",opts)
