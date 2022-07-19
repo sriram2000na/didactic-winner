@@ -6,6 +6,11 @@ local lsp_installer_ok, lsp_installer = pcall(require, "nvim-lsp-installer")
 if not lsp_installer_ok then
     return
 end
+
+local status_ok, rust_tools = pcall(require, "rust-tools")
+if not status_ok then
+    return
+end
 local util = require 'vim.lsp.util'
 lsp_installer.setup {}
 local servers = lsp_installer.get_installed_servers()
@@ -48,6 +53,18 @@ vim.diagnostic.config(config)
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
     border = "rounded",
 })
+
+-- vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+--     vim.lsp.diagnostic.on_publish_diagnostics,
+--     {
+--         underline = true,
+--         virtual_text = {
+--             spacing = 5,
+--             severity_limit = 'Warning',
+--         },
+--         update_in_insert = true,
+--     }
+-- )
 
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
     border = "rounded",
@@ -122,7 +139,7 @@ end
 -- end
 
 local on_attach = function(client, bufnr)
-    if client.name == "tsserver" or client.name == "clangd" then
+    if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
         client.resolved_capabilities.document_formatting = false
         client.server_capabilities.document_formatting = false
         client.server_capabilities.documentFormattingProvider = false
@@ -144,6 +161,12 @@ local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_clie
 for _, lsp in ipairs(servers) do
     local opts = { on_attach = on_attach, capabilities = capabilities }
     -- configure your own server things here, like disabling formatting n all
+    if lsp.name == 'rust_analyzer' then
+        -- print(vim.inspect(lsp._default_options))
+        opts.server = { cmd = lsp._default_options.cmd, standalone = true }
+        rust_tools.setup(opts);
+        goto continue
+    end
     if lsp.name == 'sumneko_lua' then
         opts.settings = {
             Lua = {
@@ -157,6 +180,7 @@ for _, lsp in ipairs(servers) do
         opts.capabilities.offsetEncoding = 'utf-8'
     end
     lspconfig[lsp.name].setup(opts)
+    ::continue::
 end
 
 -- Ex: lspconfig.lspname.setup{on_attach = onattach}

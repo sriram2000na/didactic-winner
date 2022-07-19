@@ -94,12 +94,18 @@ return packer.startup(function(use)
         run = ":TSUpdate",
     })
     use("JoosepAlviste/nvim-ts-context-commentstring")
+    -- Languafe Specific
     -- Vim Indent object for python
     use 'michaeljsmith/vim-indent-object'
-
+    -- Rust Tools
+    use "simrat39/rust-tools.nvim"
 
     -- Git
     use("lewis6991/gitsigns.nvim")
+
+    -- HTML auto tags
+    -- setup is in treesitter config
+    use 'windwp/nvim-ts-autotag'
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
