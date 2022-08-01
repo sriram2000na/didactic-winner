@@ -34,6 +34,14 @@ vim.cmd [[
     autocmd BufWritePre * lua vim.lsp.buf.formatting()
   augroup end
 ]]
+vim.api.nvim_create_autocmd({ "InsertLeave", "CursorHold" }, {
+    pattern = { "*.rs" },
+    callback = function()
+        -- print("codelens activated")
+        -- print(vim.lsp.codelens)
+        -- vim.lsp.codelens.refresh()
+    end
+})
 -- augroup _lsp
 --   autocmd!
 --   autocmd BufWritePre * lua vim.lsp.buf.formatting()

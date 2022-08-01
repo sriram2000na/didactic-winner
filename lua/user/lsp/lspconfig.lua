@@ -139,6 +139,7 @@ end
 -- end
 
 local on_attach = function(client, bufnr)
+    print(client.name)
     if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
         client.resolved_capabilities.document_formatting = false
         client.server_capabilities.document_formatting = false
@@ -159,11 +160,13 @@ local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_clie
 
 -- for each server set it up with options
 for _, lsp in ipairs(servers) do
+
     local opts = { on_attach = on_attach, capabilities = capabilities }
     -- configure your own server things here, like disabling formatting n all
     if lsp.name == 'rust_analyzer' then
         -- print(vim.inspect(lsp._default_options))
-        opts.server = { cmd = lsp._default_options.cmd, standalone = true }
+        -- print(vim.inspect(opts.on_attach))
+        opts.server = { cmd = lsp._default_options.cmd, standalone = false, on_attach = on_attach }
         rust_tools.setup(opts);
         goto continue
     end
