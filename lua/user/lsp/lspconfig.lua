@@ -139,7 +139,7 @@ end
 -- end
 
 local on_attach = function(client, bufnr)
-    print(client.name)
+    --[[ print(client.name) ]]
     if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
         client.resolved_capabilities.document_formatting = false
         client.server_capabilities.document_formatting = false

@@ -67,9 +67,9 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 -- Comments plugin keymap --
-keymap("n", "<C-_>", ":lua require('Comment.api').toggle_current_linewise()<CR>", opts)
-keymap("x", "<C-_>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>', opts)
-keymap("i", "<C-_>", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)
+keymap("n", "<C-_>", ":lua require('Comment.api').toggle.linewise.current()<CR>", opts)
+keymap("x", "<C-_>", '<ESC><CMD>lua require("Comment.api").toggle.linewise(vim.fn.visualmode())<CR>', opts)
+keymap("i", "<C-_>", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
 -- Ctrl + s to save
 keymap("i", "<C-s>", "<cmd>w<CR>", opts)
 keymap("n", "<C-s>", ":w<CR>", opts)
