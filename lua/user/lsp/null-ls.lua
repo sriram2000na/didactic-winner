@@ -11,6 +11,14 @@ local diagnostics = null_ls.builtins.diagnostics
 null_ls.setup({
     sources = {
         -- add sources for formatting here. Ex: prettier
+        --[[ formatting.black, ]]
+        formatting.autopep8,
+        diagnostics.pylint.with({
+            extra_args = { "--errors-only" },
+            diagnostics_postprocess = function(diagnostic)
+                diagnostic.code = diagnostic.message_id
+            end,
+        }),
         formatting.prettier.with({ extra_args = { "--single-quote", "--jsx-single-quote" } }),
         formatting.clang_format.with({ args = { "-style", "file" } }),
     }

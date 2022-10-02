@@ -106,7 +106,6 @@ return packer.startup(function(use)
     -- HTML auto tags
     -- setup is in treesitter config
     use 'windwp/nvim-ts-autotag'
-
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if PACKER_BOOTSTRAP then

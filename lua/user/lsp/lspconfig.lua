@@ -179,6 +179,17 @@ for _, lsp in ipairs(servers) do
             }
         }
     end
+    if lsp.name == 'pyright' then
+        opts.settings = {
+            python = {
+                analysis = {
+                    autoSearchPaths = true,
+                    useLibraryCodeForTypes = false,
+                    diagnosticMode = 'workspace',
+                },
+            },
+        }
+    end
     if lsp.name == 'clangd' then
         opts.capabilities.offsetEncoding = 'utf-8'
     end
