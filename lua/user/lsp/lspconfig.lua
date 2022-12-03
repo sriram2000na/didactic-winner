@@ -71,7 +71,8 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 })
 local function lsp_highlight_document(client)
     -- Set autocommands conditional on server_capabilities
-    if client.resolved_capabilities.document_highlight then
+    if client.server_capabilities.documentHighlightProvider then
+        --[[ print(vim.inspect(client.server_capabilities)) ]]
         vim.api.nvim_exec(
             [[
       augroup lsp_document_highlight
@@ -141,7 +142,8 @@ end
 local on_attach = function(client, bufnr)
     --[[ print(client.name) ]]
     if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
-        client.resolved_capabilities.document_formatting = false
+        --[[ print(vim.inspect(client)) ]]
+        client.server_capabilities.document_formatting = false
         client.server_capabilities.document_formatting = false
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentRangeFormattingProvider = false
@@ -156,7 +158,8 @@ if not cmp_status_ok then
     return
 end
 
-local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = cmp_nvim_lsp.default_capabilities()
+--[[ local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()) ]]
 
 -- for each server set it up with options
 for _, lsp in ipairs(servers) do

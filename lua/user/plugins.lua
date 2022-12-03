@@ -63,10 +63,12 @@ return packer.startup(function(use)
     use "mg979/vim-visual-multi"
 
     -- Colorschemes
-    -- use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
-    use { "lunarvim/darkplus.nvim", commit = "29d2fe5be08bbc1aada7436db2c717389b5c50a0" }
-    -- use "Mofiqul/vscode.nvim"
-
+    use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
+    use { "lunarvim/darkplus.nvim", branch = "neovim-0.7" }
+    --[[ use "martinsione/darkplus.nvim" ]]
+    use "tomasiser/vim-code-dark";
+    use "Mofiqul/vscode.nvim"
+    --[[ use "christianchiarulli/nvcode-color-schemes.vim" ]]
     -- cmp plugins
     use("hrsh7th/nvim-cmp") -- The completion plugin
     use("hrsh7th/cmp-buffer") -- buffer completions
