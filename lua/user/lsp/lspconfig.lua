@@ -2,18 +2,20 @@ local status_ok, lspconfig = pcall(require, "lspconfig")
 if not status_ok then
     return
 end
-local lsp_installer_ok, lsp_installer = pcall(require, "nvim-lsp-installer")
-if not lsp_installer_ok then
-    return
-end
-
 local status_ok, rust_tools = pcall(require, "rust-tools")
 if not status_ok then
     return
 end
+local status_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
+if not status_ok then
+    return
+end
 local util = require 'vim.lsp.util'
-lsp_installer.setup {}
-local servers = lsp_installer.get_installed_servers()
+mason_lspconfig.setup({
+    automatic_installation = true
+}
+)
+local servers = mason_lspconfig.get_installed_servers()
 
 -- Copied from chrisatmachine
 
@@ -49,22 +51,22 @@ local config = {
 }
 
 vim.diagnostic.config(config)
-
+--
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
     border = "rounded",
 })
 
--- vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics,
---     {
---         underline = true,
---         virtual_text = {
---             spacing = 5,
---             severity_limit = 'Warning',
---         },
---         update_in_insert = true,
---     }
--- )
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics,
+    {
+        underline = true,
+        virtual_text = {
+            spacing = 5,
+            severity_limit = 'Warning',
+        },
+        update_in_insert = true,
+    }
+)
 
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
     border = "rounded",
@@ -75,12 +77,12 @@ local function lsp_highlight_document(client)
         --[[ print(vim.inspect(client.server_capabilities)) ]]
         vim.api.nvim_exec(
             [[
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]]       ,
+ augroup lsp_document_highlight
+ autocmd! * <buffer>
+ autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+ autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+ augroup END
+ ]]          ,
             false
         )
     end
@@ -110,35 +112,36 @@ local function lsp_keymaps(bufnr)
     vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
 end
 
--- Do after nvim 0.8 releases => change call to use .format() and use the filter to filter out LSP
--- -- Choose null-ls only to format
--- local lsp_formatting = function(client, bufnr)
---     vim.lsp.buf.format({
---         filter = function(client)
---             return client.name == "null-ls"
---         end,
---         bufnr = bufnr,
---     })
--- end
 --
--- -- if you want to set up formatting on save, you can use this as a callback
--- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
--- -- add to your shared on_attach callback
--- local on_attach = function(client, bufnr)
---     if client.supports_method("textDocument/formatting") then
---         vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
---         vim.api.nvim_create_autocmd("BufWritePre", {
---             group = augroup,
---             buffer = bufnr,
---             callback = function()
---                 lsp_formatting(client, bufnr)
---             end,
---         })
---     end
---     lsp_keymaps(bufnr)
---     lsp_highlight_document(client)
--- end
-
+-- -- Do after nvim 0.8 releases => change call to use .format() and use the filter to filter out LSP
+-- -- -- Choose null-ls only to format
+-- -- local lsp_formatting = function(client, bufnr)
+-- --     vim.lsp.buf.format({
+-- --         filter = function(client)
+-- --             return client.name == "null-ls"
+-- --         end,
+-- --         bufnr = bufnr,
+-- --     })
+-- -- end
+-- --
+-- -- -- if you want to set up formatting on save, you can use this as a callback
+-- -- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+-- -- -- add to your shared on_attach callback
+-- -- local on_attach = function(client, bufnr)
+-- --     if client.supports_method("textDocument/formatting") then
+-- --         vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+-- --         vim.api.nvim_create_autocmd("BufWritePre", {
+-- --             group = augroup,
+-- --             buffer = bufnr,
+-- --             callback = function()
+-- --                 lsp_formatting(client, bufnr)
+-- --             end,
+-- --         })
+-- --     end
+-- --     lsp_keymaps(bufnr)
+-- --     lsp_highlight_document(client)
+-- -- end
+--
 local on_attach = function(client, bufnr)
     --[[ print(client.name) ]]
     if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
@@ -157,23 +160,22 @@ local cmp_status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if not cmp_status_ok then
     return
 end
-
+--
 local capabilities = cmp_nvim_lsp.default_capabilities()
 --[[ local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()) ]]
 
 -- for each server set it up with options
-for _, lsp in ipairs(servers) do
+for _, lsp_name in ipairs(servers) do
 
     local opts = { on_attach = on_attach, capabilities = capabilities }
     -- configure your own server things here, like disabling formatting n all
-    if lsp.name == 'rust_analyzer' then
+    if lsp_name == 'rust_analyzer' then
         -- print(vim.inspect(lsp._default_options))
         -- print(vim.inspect(opts.on_attach))
-        opts.server = { cmd = lsp._default_options.cmd, standalone = false, on_attach = on_attach }
         rust_tools.setup(opts);
         goto continue
     end
-    if lsp.name == 'sumneko_lua' then
+    if lsp_name == 'sumneko_lua' then
         opts.settings = {
             Lua = {
                 diagnostics = {
@@ -182,7 +184,7 @@ for _, lsp in ipairs(servers) do
             }
         }
     end
-    if lsp.name == 'pyright' then
+    if lsp_name == 'pyright' then
         opts.settings = {
             python = {
                 analysis = {
@@ -193,10 +195,10 @@ for _, lsp in ipairs(servers) do
             },
         }
     end
-    if lsp.name == 'clangd' then
+    if lsp_name == 'clangd' then
         opts.capabilities.offsetEncoding = 'utf-8'
     end
-    lspconfig[lsp.name].setup(opts)
+    lspconfig[lsp_name].setup(opts)
     ::continue::
 end
 
