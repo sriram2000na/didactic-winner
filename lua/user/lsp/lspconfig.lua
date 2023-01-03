@@ -109,60 +109,48 @@ local function lsp_keymaps(bufnr)
     )
     vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", '<cmd>lua vim.diagnostic.goto_next({ border = "rounded" })<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
-    vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
+    vim.cmd([[ command! Format execute 'lua vim.lsp.buf.format()' ]])
 end
 
 --
 -- -- Do after nvim 0.8 releases => change call to use .format() and use the filter to filter out LSP
 -- -- -- Choose null-ls only to format
--- -- local lsp_formatting = function(client, bufnr)
--- --     vim.lsp.buf.format({
--- --         filter = function(client)
--- --             return client.name == "null-ls"
--- --         end,
--- --         bufnr = bufnr,
--- --     })
--- -- end
--- --
+--[[ local lsp_formatting = function(client, bufnr) ]]
+--[[     vim.lsp.buf.format({ ]]
+--[[         filter = function(client) ]]
+--[[             return client.name == "null-ls" ]]
+--[[         end, ]]
+--[[         bufnr = bufnr, ]]
+--[[     }) ]]
+--[[ end ]]
+
 -- -- -- if you want to set up formatting on save, you can use this as a callback
--- -- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
--- -- -- add to your shared on_attach callback
--- -- local on_attach = function(client, bufnr)
--- --     if client.supports_method("textDocument/formatting") then
--- --         vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
--- --         vim.api.nvim_create_autocmd("BufWritePre", {
--- --             group = augroup,
--- --             buffer = bufnr,
--- --             callback = function()
--- --                 lsp_formatting(client, bufnr)
--- --             end,
--- --         })
--- --     end
--- --     lsp_keymaps(bufnr)
--- --     lsp_highlight_document(client)
--- -- end
---
+local lsp_formatting_augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+-- add to your shared on_attach callback
 local on_attach = function(client, bufnr)
-    --[[ print(client.name) ]]
-    if client.name == "tsserver" or client.name == "clangd" or client.name == "html" then
-        --[[ print(vim.inspect(client)) ]]
-        client.server_capabilities.document_formatting = false
-        client.server_capabilities.document_formatting = false
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-    end
+    --[[ if client.supports_method("textDocument/formatting") then ]]
+    --[[     vim.api.nvim_clear_autocmds({ group = lsp_formatting_augroup, buffer = bufnr }) ]]
+    --[[     vim.api.nvim_create_autocmd("BufWritePre", { ]]
+    --[[         group = lsp_formatting_augroup, ]]
+    --[[         buffer = bufnr, ]]
+    --[[         callback = function() ]]
+    --[[             lsp_formatting(client, bufnr) ]]
+    --[[         end, ]]
+    --[[     }) ]]
+    --[[ end ]]
     lsp_keymaps(bufnr)
     lsp_highlight_document(client)
 end
+
+--
 -- make capabilities compatible with nvim-cmp
 
 local cmp_status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if not cmp_status_ok then
     return
 end
---
+
 local capabilities = cmp_nvim_lsp.default_capabilities()
---[[ local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()) ]]
 
 -- for each server set it up with options
 for _, lsp_name in ipairs(servers) do
