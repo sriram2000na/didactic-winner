@@ -12,8 +12,7 @@ local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 null_ls.setup({
     sources = {
         -- add sources for formatting here. Ex: prettier
-        --[[ formatting.black, ]]
-        formatting.autopep8,
+        formatting.black,
         diagnostics.pylint.with({
             extra_args = { "--errors-only" },
             diagnostics_postprocess = function(diagnostic)
