@@ -55,7 +55,7 @@ return packer.startup(function(use)
     use("ahmedkhalf/project.nvim")
     use("voldikss/vim-floaterm")
     use("lewis6991/impatient.nvim")
-    use("lukas-reineke/indent-blankline.nvim")
+    use{"lukas-reineke/indent-blankline.nvim"}
     use("goolord/alpha-nvim")
     use("antoinemadec/FixCursorHold.nvim") -- This is needed to fix lsp doc highlight
     use("folke/which-key.nvim")
@@ -110,6 +110,9 @@ return packer.startup(function(use)
     -- HTML auto tags
     -- setup is in treesitter config
     use 'windwp/nvim-ts-autotag'
+
+    -- install codeium
+    use { "Exafunction/codeium.vim"}
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
     if PACKER_BOOTSTRAP then
