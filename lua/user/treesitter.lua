@@ -19,8 +19,7 @@ configs.setup {
         additional_vim_regex_highlighting = true,
     },
     indent = { enable = false, disable = { "yaml" } },
-    context_commentstring = {
-        enable = true,
-        enable_autocmd = false,
-    },
 }
+
+require("ts_context_commentstring").setup{}
+vim.g.skip_ts_context_commentstring_module = true
