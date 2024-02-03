@@ -9,12 +9,15 @@ local diagnostics = null_ls.builtins.diagnostics
 -- https://github.com/jose-elias-alvarez/null-ls.nvim/tree/main/lua/null-ls/builtins/diagnostics
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+pylint_init_hook="\"import pylint_venv; pylint_venv.inithook(quiet=True)\""
 null_ls.setup({
+    debug = true,
     sources = {
         -- add sources for formatting here. Ex: prettier
         formatting.black,
         diagnostics.pylint.with({
-            extra_args = { "--errors-only" },
+            args = { "$FILENAME", "-f", "json" },
+            extra_args = { "--errors-only", "--init-hook", pylint_init_hook},
             diagnostics_postprocess = function(diagnostic)
                 diagnostic.code = diagnostic.message_id
             end,
