@@ -17,6 +17,10 @@ mason_lspconfig.setup({
 )
 local servers = mason_lspconfig.get_installed_servers()
 
+local status_ok, lsp_status = pcall(require, "lsp-status")
+if not status_ok then
+    print("lsp status not working")
+end
 -- Copied from chrisatmachine
 
 local signs = {
@@ -31,8 +35,13 @@ for _, sign in ipairs(signs) do
 end
 
 local config = {
-    -- disable virtual text
-    virtual_text = false,
+    -- virtual_text = {
+    --     severity = vim.diagnostic.severity.WARN,
+    --     spacing = 5,
+    --     update_in_insert = true,
+    -- },
+    virtual_text = true,
+    severity = vim.diagnostic.severity.WARN,
     -- show signs
     signs = {
         active = signs,
@@ -56,17 +65,17 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
     border = "rounded",
 })
 
-vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics,
-    {
-        underline = true,
-        virtual_text = {
-            spacing = 5,
-            severity_limit = 'Warning',
-        },
-        update_in_insert = true,
-    }
-)
+-- vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+--     vim.lsp.diagnostic.on_publish_diagnostics,
+--     {
+--         underline = true,
+--         virtual_text = {
+--             spacing = 5,
+--         },
+--
+--         update_in_insert = true,
+--     }
+-- )
 
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
     border = "rounded",
@@ -160,6 +169,7 @@ for _, lsp_name in ipairs(servers) do
     if lsp_name == 'rust_analyzer' then
         -- print(vim.inspect(lsp._default_options))
         -- print(vim.inspect(opts.on_attach))
+        opts.capabilities = lsp_status.capabilities
         rust_tools.setup(opts);
         goto continue
     end
@@ -185,6 +195,20 @@ for _, lsp_name in ipairs(servers) do
     end
     if lsp_name == 'clangd' then
         opts.capabilities.offsetEncoding = 'utf-8'
+    end
+    if lsp_name == 'gopls' then
+        opts.cmd = {"gopls", "-logfile", "/home/sriram/gopls.log", "-rpc.trace"}
+        opts.filetypes = { "go", "gomod", "gowork", "gotmpl" }
+        opts.root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git")
+        opts.settings = {
+            gopls = {
+                completeUnimported = true,
+                analyses = {
+                    unusedparams = true,
+                },
+            },
+        }
+        opts.single_file_support=true
     end
     lspconfig[lsp_name].setup(opts)
     ::continue::

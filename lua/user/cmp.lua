@@ -120,9 +120,6 @@ cmp.setup {
         behavior = cmp.ConfirmBehavior.Replace,
         select = false,
     },
-    -- documentation = {
-    --     border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-    -- },
     window = {
         documentation = cmp.config.window.bordered(),
     },
@@ -130,4 +127,5 @@ cmp.setup {
         ghost_text = false,
         native_menu = false,
     },
+    preselect = cmp.PreselectMode.None,
 }

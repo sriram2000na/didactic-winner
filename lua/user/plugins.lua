@@ -111,6 +111,15 @@ return packer.startup(function(use)
     -- setup is in treesitter config
     use 'windwp/nvim-ts-autotag'
 
+    -- navigation
+    use({ "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter", requires = "nvim-treesitter/nvim-treesitter", })
+    use({ "stevearc/aerial.nvim", config = function() require("aerial").setup() end, })
+    -- markdown preview duh
+    use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
+
+    use ("nvim-lua/lsp-status.nvim")
+    -- use 'mfussenegger/nvim-lint'
+
     -- install codeium
     use { "Exafunction/codeium.vim"}
     -- Automatically set up your configuration after cloning packer.nvim
